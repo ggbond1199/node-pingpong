@@ -10,6 +10,8 @@ function password_protect() {
     fi
 }
 
+#!/bin/bash
+
 # 检查是否以root用户运行脚本
 if [ "$(id -u)" != "0" ]; then
     echo "此脚本需要以root用户权限运行。"
@@ -79,28 +81,48 @@ function reboot_pingpong() {
     screen -dmS pingpong bash -c "./PINGPONG --key \"$keyid\""
 }
 
+function start_0g_pingpong() {
+    read -p "请输入你的0g私钥: " your_0g_key
+    keyid="$your_0g_key"
+    screen -dmS pingpong-0g bash -c "./PINGPONG config set --0g=$your_0g_key && ./PINGPONG start --depins=0g"
+}
+
+function start_aioz() {
+    read -p "请输入你的aioz私钥: " your_aioz_key
+    keyid="$your_aioz_key"
+    screen -dmS pingpong-aioz bash -c "./PINGPONG config set --aioz=$your_aioz_key && ./PINGPONG start --depins=aioz"
+}
+
+function start_grass() {
+    read -p "请输入你的grass私钥: " your_grass_key
+    keyid="$your_grass_key"
+    screen -dmS pingpong-grass bash -c "./PINGPONG config set --grass=$your_grass_key && ./PINGPONG start --depins=grass"
+}
 
 # 主菜单
 function main_menu() {
     clear
-    echo "Made by Bond Node Community"
-    echo "欢迎部署pingpong节点"
-    echo "=====================安装及常规修改功能========================="
-    echo "Join Bond Node Community, go go go"
-    echo "节点社区 Discord:https://discord.gg/ecJq3NBE6M"
-
+    echo "4，5，6分别需要自备账号"
+    echo "想挖4，5，6的哪个就注册哪个，启动哪个按键"
+    echo "================================================================"
     echo "请选择要执行的操作:"
     echo "1. 安装节点"
     echo "2. 查看节点日志"
     echo "3. 重启pingpong"
-    read -p "请输入选项（1-3）: " OPTION
+    echo "4. 启动pingpong-0g(需要自备私钥)"
+    echo "5. 启动pingpong-aioz(需要自备私钥)"
+    echo "6. 启动pingpong-grass(需要自备userid)"
+    read -p "请输入选项（1-6）: " OPTION
 
     case $OPTION in
     1) 
-	password_protect
-	install_node ;;
+    	password_protect
+    	install_node ;;
     2) check_service_status ;;
     3) reboot_pingpong ;; 
+    4) start_0g_pingpong ;; 
+    5) start_aioz ;; 
+    6) start_grass ;; 
     *) echo "无效选项。" ;;
     esac
 }
